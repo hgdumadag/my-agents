@@ -4,4 +4,4 @@ pandas
 pydeck
 streamlit
 crewai[tools]
-pysqlite3
+pysqlite3-binary
