@@ -112,7 +112,7 @@ def main():
     
     if st.button("Ask CIA"):
         if question:
-            results = crew.kickoff(inputs="question":'{question}')
+            results = crew.kickoff(inputs={"question": question})
             #st.subheader("Draft Answer to Question:")
             #st.write(results[draft_answer_provider.role])  # Display results from the draft answer provider
             #st.subheader("Critique to Draft Answer:")
