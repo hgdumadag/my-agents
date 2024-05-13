@@ -154,8 +154,10 @@ class StreamToExpander:
 
             cleaned_data = cleaned_data.replace("Entering new CrewAgentExecutor chain", f":{self.colors[self.color_index]}[Entering new CrewAgentExecutor chain]")
 
-        if " draft answer provider" in cleaned_data:
+         if "decomposer agent" in cleaned_data:
             # Apply different color 
+            cleaned_data = cleaned_data.replace("Decomposer Agent", f":{self.colors[self.color_index]}[decomposer agent]")
+        if "draft answer provider" in cleaned_data:
             cleaned_data = cleaned_data.replace("Draft Answer Provider", f":{self.colors[self.color_index]}[draft answer provider]")
         if "draft answer critique" in cleaned_data:
             cleaned_data = cleaned_data.replace("Answer Critique", f":{self.colors[self.color_index]}[draft answer critique]")
