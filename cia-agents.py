@@ -33,7 +33,7 @@ agent_llm = ChatOpenAI(
 question = ""
 
 #Create the crew
-def create_crewai_setup(question)
+def create_crewai_setup(question):
     #Define Agents
     draft_answer_provider = Agent(
         role = "draft answer provider",
