@@ -32,6 +32,7 @@ agent_llm = ChatOpenAI(
     base_url = "https://api.groq.com/openai/v1"
     )
 
+task_values = []
 question = ""
 
 #Create the crew
