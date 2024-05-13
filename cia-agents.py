@@ -64,7 +64,7 @@ answer_critique = Agent(
 ###
 final_answer_provider = Agent(
     role = "final answer provider",
-    goal = "Incorporate the critique critique provided by the 'answer_critique' agent to the draft answer provided by the 'draft_answer_provider' agent, and provide the final answer to the user. Provide a very clear and accurate answer.",
+    goal = "Incorporate the critique provided by the 'answer_critique' agent to the draft answer provided by the 'draft_answer_provider' agent, and provide the final answer to the user. Provide a very clear and accurate answer.",
     backstory = "You are an AI assistant whose only job is to write the final answer to the user. The draft answer will be provided to you by the 'draft_answer_provider' agent and the critique to the draft answer will be provided by the 'answer_critique' agent.",
     verbose = True,
     allow_delegation = False,
@@ -90,14 +90,14 @@ critique = Task(
 #)
 
 final_answer = Task(
-    description = f"Final answer to the question: '{question}' based on the draft answer provided by the 'draft_answer_provider' agent, the critique provided by the 'answer_critique' agent and the relevant research materials provided by the 'researcher' agent.",
+    description = f"Final answer to the question: '{question}' based on the draft answer provided by the 'draft_answer_provider' agent and the critique provided by the 'answer_critique' agent.",
     agent = final_answer_provider,
     expected_output = "A final answer that incorporates the critique provided by the 'answer_critique' agent to the draft answer provided by the 'draft_answer_provider' agent to answer the question of the user.",
 )
 
 crew = Crew(
     #agents = [draft_answer_provider, answer_critique, researcher, final_answer_provider],
-    #tasks = [draft_answer, critique, research_task, final_answer],
+    #tasks = [draft_answer, critique, research_task, final_answer 
     agents = [draft_answer_provider, answer_critique, final_answer_provider],
     tasks = [draft_answer, critique,  final_answer],
     verbose = 2,
