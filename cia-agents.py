@@ -175,7 +175,7 @@ def run_crewai_app():
         st.table({"Tasks" : task_values})
 
         st.header("Results:")
-        st.markdown(crew_results)
+        st.markdown(crew_result)
 
 
 
