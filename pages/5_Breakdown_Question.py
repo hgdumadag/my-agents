@@ -154,7 +154,7 @@ class StreamToExpander:
 
             cleaned_data = cleaned_data.replace("Entering new CrewAgentExecutor chain", f":{self.colors[self.color_index]}[Entering new CrewAgentExecutor chain]")
 
-         if "Query Decomposer" in cleaned_data:
+        if "Query Decomposer" in cleaned_data:
             # Apply different color 
             cleaned_data = cleaned_data.replace("Query Decomposer", f":{self.colors[self.color_index]}[Query Decomposer]")
         if "draft answer provider" in cleaned_data:
