@@ -16,8 +16,8 @@ os.environ["OPENAI_API_BASE"] = 'https://api.groq.com/openai/v1'
 os.environ["OPENAI_MODEL_NAME"] ='llama3-70b-8192'  # Adjust based on available model
 #os.environ["OPENAI_MODEL_NAME"] ='llama3-8b-8192'
 
-os.environ["OPENAI_API_KEY"] = st.secrets('OPENAI_API_KEY')
-os.environ["SERPER_API_KEY"] = st.secrets('SERPER_API_KEY')
+os.environ["OPENAI_API_KEY"] = st.secrets['OPENAI_API_KEY']
+os.environ["SERPER_API_KEY"] = st.secrets['SERPER_API_KEY']
 
 # Instantiate tools
 search_tool = SerperDevTool()
