@@ -1,5 +1,6 @@
 #pip install crewai[tools]
-
+import streamlit as st
+from streamlit.logger import get_logger
 from crewai import Agent, Task, Crew, Process
 
 from crewai_tools import (
@@ -11,14 +12,12 @@ from crewai_tools import (
 
 import os
 
-from google.colab import userdata
-
 os.environ["OPENAI_API_BASE"] = 'https://api.groq.com/openai/v1'
 os.environ["OPENAI_MODEL_NAME"] ='llama3-70b-8192'  # Adjust based on available model
 #os.environ["OPENAI_MODEL_NAME"] ='llama3-8b-8192'
 
-os.environ["OPENAI_API_KEY"] = userdata.get('OPENAI_API_KEY')
-os.environ["SERPER_API_KEY"] = userdata.get('SERPER_API_KEY')
+os.environ["OPENAI_API_KEY"] = st.secrets('OPENAI_API_KEY')
+os.environ["SERPER_API_KEY"] = st.secrets('SERPER_API_KEY')
 
 # Instantiate tools
 search_tool = SerperDevTool()
@@ -32,7 +31,8 @@ agent_llm = ChatOpenAI(
     )
 
 #question = "What are the risks associated with running an airline company?"
-question = "How to conduct BCP advisory audit activity for a department that you know doesn't have BCP?"
+#question = "How to conduct BCP advisory audit activity for a department that you know doesn't have BCP?"
+question = ""
 
 draft_answer_provider = Agent(
     role = "draft answer provider",
@@ -102,5 +102,20 @@ crew = Crew(
     process = Process.sequential
 )
 
-output = crew.kickoff()
-print(output)
+
+
+def main():
+    st.title("CIA Agents")
+    question = st.text_input("What do you want to ask the CIA Agents:", "")
+    
+    if st.button("Ask CIA"):
+        if question:
+            results = crew.kickoff(inputs={"question": question})
+            st.write("Answer to Question:")
+            st.write(results)
+        else:
+            st.write("Please enter a question to proceed.")
+
+if __name__ == "__main__":
+    main()
+
