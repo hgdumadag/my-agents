@@ -64,7 +64,7 @@ answer_critique = Agent(
 ###
 final_answer_provider = Agent(
     role = "final answer provider",
-    goal = "Incorporate the critique critique provided by the 'answer_critique' agent to the draft answer provided by the 'draft_answer_provider' agent, and provide the final answer to the user. Provide a very clear and accurate answer. Check with human for inputs before proceeding to write the final answer.",
+    goal = "Incorporate the critique critique provided by the 'answer_critique' agent to the draft answer provided by the 'draft_answer_provider' agent, and provide the final answer to the user. Provide a very clear and accurate answer.",
     backstory = "You are an AI assistant whose only job is to write the final answer to the user. The draft answer will be provided to you by the 'draft_answer_provider' agent and the critique to the draft answer will be provided by the 'answer_critique' agent.",
     verbose = True,
     allow_delegation = False,
@@ -92,7 +92,7 @@ critique = Task(
 final_answer = Task(
     description = f"Final answer to the question: '{question}' based on the draft answer provided by the 'draft_answer_provider' agent, the critique provided by the 'answer_critique' agent and the relevant research materials provided by the 'researcher' agent.",
     agent = final_answer_provider,
-    expected_output = "A final answer that incorporates the critique provided by the 'answer_critique' agent to the draft answer provided by the 'draft_answer_provider' agent together with the materials provided by the 'researcher' agent to answer the question of the user.",
+    expected_output = "A final answer that incorporates the critique provided by the 'answer_critique' agent to the draft answer provided by the 'draft_answer_provider' agent to answer the question of the user.",
 )
 
 crew = Crew(
