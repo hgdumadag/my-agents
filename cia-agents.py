@@ -49,19 +49,19 @@ answer_critique = Agent(
     verbose = True,
     allow_delegation = False,
 )
-
-researcher = Agent(
-    role="AI Research Specialist",
-    goal="To conduct thorough internet-based research to validate and expand upon the draft answers provided by the draft_answer_provider and to incorporate feedback from the answer_critique. The goal includes identifying credible sources, gathering pertinent facts, and contributing insights that ensure the final answer is accurate, up-to-date, detailed, and aligned with the critique's suggestions.",
-    backstory="Born out of a need to combat misinformation and provide only the most reliable data, I was created as a digital librarian with a twist. Equipped with advanced natural language processing skills and extensive access to a wide array of databases, my purpose is to sift through the vast ocean of information on the internet and extract only the most relevant and accurate data. My existence is dedicated to elevating the quality of information by providing well-researched contributions to any discourse, specifically tailored to enhance the accuracy and depth of responses in an AI-driven question-answer system.",
-    tools=[search_tool, web_rag_tool],
-    verbose=True,
-    max_rpm=50,
-    max_iter=20,
-    allow_delegation=False,
-    llm = agent_llm
-)
-
+###
+#researcher = Agent(
+#    role="AI Research Specialist",
+#    goal="To conduct thorough internet-based research to validate and expand upon the draft answers provided by the draft_answer_provider and to incorporate feedback from the answer_critique. The goal includes identifying credible sources, gathering pertinent facts, and contributing insights that ensure the final answer is accurate, up-to-date, detailed, and aligned with the critique's suggestions.",
+#    backstory="Born out of a need to combat misinformation and provide only the most reliable data, I was created as a digital librarian with a twist. Equipped with advanced natural language processing skills and extensive access to a wide array of databases, my purpose is to sift through the vast ocean of information on the internet and extract only the most relevant and accurate data. My existence is dedicated to elevating the quality of information by providing well-researched contributions to any discourse, specifically tailored to enhance the accuracy and depth of responses in an AI-driven question-answer system.",
+#    tools=[search_tool, web_rag_tool],
+#    verbose=True,
+#    max_rpm=50,
+#    max_iter=20,
+#    allow_delegation=False,
+#    llm = agent_llm
+#)
+###
 final_answer_provider = Agent(
     role = "final answer provider",
     goal = "Incorporate the critique critique provided by the 'answer_critique' agent to the draft answer provided by the 'draft_answer_provider' agent, and provide the final answer to the user. Provide a very clear and accurate answer. Check with human for inputs before proceeding to write the final answer.",
@@ -83,11 +83,11 @@ critique = Task(
     expected_output = "a very thorough critique on the accuracy, validity, correctness and completeness of the draft answer provided by the 'draft_answer_provider' agent.",
 )
 
-research_task = Task(
-    description=f"Research and verify information related to the query: '{question}'",
-    agent=researcher,
-    expected_output="Top 3 results of verified facts and comprehensive data that enhance the understanding and accuracy of the response to the user's question."
-)
+#research_task = Task(
+#    description=f"Research and verify information related to the query: '{question}'",
+#    agent=researcher,
+#    expected_output="Top 3 results of verified facts and comprehensive data that enhance the understanding and accuracy of the response to the user's question."
+#)
 
 final_answer = Task(
     description = f"Final answer to the question: '{question}' based on the draft answer provided by the 'draft_answer_provider' agent, the critique provided by the 'answer_critique' agent and the relevant research materials provided by the 'researcher' agent.",
@@ -96,8 +96,10 @@ final_answer = Task(
 )
 
 crew = Crew(
-    agents = [draft_answer_provider, answer_critique, researcher, final_answer_provider],
-    tasks = [draft_answer, critique, research_task, final_answer],
+    #agents = [draft_answer_provider, answer_critique, researcher, final_answer_provider],
+    #tasks = [draft_answer, critique, research_task, final_answer],
+    agents = [draft_answer_provider, answer_critique, final_answer_provider],
+    tasks = [draft_answer, critique,  final_answer],
     verbose = 2,
     process = Process.sequential
 )
