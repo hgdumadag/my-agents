@@ -68,7 +68,7 @@ final_answer_provider = Agent(
     backstory = "You are an AI assistant whose only job is to write the final answer to the user. The draft answer will be provided to you by the 'draft_answer_provider' agent and the critique to the draft answer will be provided by the 'answer_critique' agent.",
     verbose = True,
     allow_delegation = False,
-    human_feedback = True,
+    #human_feedback = True,
 )
 
 draft_answer = Task(
