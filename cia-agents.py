@@ -171,8 +171,8 @@ def run_crewai_app():
             with st.spinner("Generating Results"):
                 crew_result = create_crewai_setup(question)
 
-        st.header("Tasks:")
-        st.table({"Tasks" : task_values})
+        #st.header("Tasks:")
+        #st.table({"Tasks" : task_values})
 
         st.header("Results:")
         st.markdown(crew_result)
