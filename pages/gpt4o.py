@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 import base64
 from dotenv import load_dotenv
 from openai import OpenAI
