@@ -1,6 +1,8 @@
 import streamlit as st
 import os
 import base64
+import io
+from PIL import Image
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -11,7 +13,6 @@ api_key = OPENAI_API_KEY2
 client = OpenAI()
 # Initialize API client with credentials
 
-user_query = "Look at this image and explain it"
 
 def gpt40_chat(user_query):
     """Send a query to the GPT-4.0 model and return the response."""
@@ -32,12 +33,16 @@ def gpt40_chat(user_query):
         st.error(f"API call failed: {e}")
         return None
 
-def encode_image_to_base64(image_file):
-    """Encode an image file to base64."""
+
+def encode_image_to_base64(uploaded_file):
     try:
-        return base64.b64encode(image_file.getvalue()).decode('utf-8')
+        # Reading the contents of the uploaded file
+        file_content = uploaded_file.read()
+        # Encoding the contents to base64
+        encoded_content = base64.b64encode(file_content).decode('utf-8')
+        return encoded_content
     except Exception as e:
-        st.error(f"Failed to encode image: {e}")
+        print(f"Error reading the uploaded file: {e}")
         return None
 
 def analyze_image(image_file):
@@ -56,15 +61,17 @@ def analyze_image(image_file):
 def run_app():
     st.title('Image Analysis App')
     
-    uploaded_file = st.file_uploader("Choose images", type=['png', 'jpg', 'jpeg'], accept_multiple_files=False)
-    if uploaded_file:
-        for uploaded_file in uploaded_file:
-            st.image(uploaded_file, caption=f"Uploaded Image: {uploaded_file.name}", use_column_width=True)
-            description = analyze_image(uploaded_file)
-            if description:
-                st.write(f"Analysis for {uploaded_file.name}: {description}")
+    uploaded_files = st.file_uploader("Choose images", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
+    if uploaded_files:
+        for uploaded_file in uploaded_files:
+            if uploaded_file is not None:
+                bytes_data = uploaded_file.getvalue()
+                st.image(uploaded_file, caption=f"Uploaded Image: {uploaded_file.name}", use_column_width=True)
+                uploaded_file.seek(0)
+                description = analyze_image(uploaded_file)
+                if description:
+                    st.write(f"Analysis for {uploaded_file.name}: {description}")
 
 
 if __name__ == "__main__":
     run_app()
-
