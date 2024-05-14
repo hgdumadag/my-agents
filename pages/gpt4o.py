@@ -11,6 +11,7 @@ api_key = OPENAI_API_KEY2
 client = OpenAI()
 # Initialize API client with credentials
 
+user_query = "Look at this image and explain it"
 
 def gpt40_chat(user_query):
     """Send a query to the GPT-4.0 model and return the response."""
