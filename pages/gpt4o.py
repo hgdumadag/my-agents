@@ -3,7 +3,6 @@ import base64
 from dotenv import load_dotenv
 from openai import OpenAI
 
-load_dotenv()
 
 os.environ["api_key"] = st.secrets['REAL_OPENAI_API_KEY']
 
