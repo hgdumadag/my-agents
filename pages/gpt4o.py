@@ -5,8 +5,9 @@ from dotenv import load_dotenv
 from openai import OpenAI
 
 
-os.environ["api_key"] = st.secrets['OPENAI_API_KEY2']
+os.environ["OPENAI_API_KEY2"] = st.secrets['OPENAI_API_KEY2']
 
+api_key = OPENAI_API_KEY2
 client = OpenAI()
 # Initialize API client with credentials
 
