@@ -51,13 +51,18 @@ def analyze_image(image_file):
         return None
 
 # Streamlit App
-st.title('Image Analysis App')
+def run_app():
+    st.title('Image Analysis App')
+    
+    uploaded_files = st.file_uploader("Choose images", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
+    if uploaded_files:
+        for uploaded_file in uploaded_files:
+            st.image(uploaded_file, caption=f"Uploaded Image: {uploaded_file.name}", use_column_width=True)
+            description = analyze_image(uploaded_file)
+            if description:
+                st.write(f"Analysis for {uploaded_file.name}: {description}")
 
-uploaded_files = st.file_uploader("Choose images", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
-if uploaded_files:
-    for uploaded_file in uploaded_files:
-        st.image(uploaded_file, caption=f"Uploaded Image: {uploaded_file.name}", use_column_width=True)
-        description = analyze_image(uploaded_file)
-        if description:
-            st.write(f"Analysis for {uploaded_file.name}: {description}")
+
+if __name__ == "__main__":
+    run_app()
 
