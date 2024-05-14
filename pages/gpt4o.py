@@ -16,7 +16,7 @@ user_query = "Look at this image and explain it"
 def gpt40_chat(user_query):
     """Send a query to the GPT-4.0 model and return the response."""
     try:
-        response = client.chat.completion.create(
+        response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {"role": "user", "content": user_query},
@@ -56,9 +56,9 @@ def analyze_image(image_file):
 def run_app():
     st.title('Image Analysis App')
     
-    uploaded_files = st.file_uploader("Choose images", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
-    if uploaded_files:
-        for uploaded_file in uploaded_files:
+    uploaded_file = st.file_uploader("Choose images", type=['png', 'jpg', 'jpeg'], accept_multiple_files=False)
+    if uploaded_file:
+        for uploaded_file in uploaded_file:
             st.image(uploaded_file, caption=f"Uploaded Image: {uploaded_file.name}", use_column_width=True)
             description = analyze_image(uploaded_file)
             if description:
