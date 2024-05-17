@@ -126,36 +126,46 @@ def run_crewai_app():
 
     question = st.text_input("What do you want to ask the CIA Agents:")
 
-    # Input fields for agent goals and backstories
-    draft_goal = st.text_area("Draft Answer Provider Goal:", "accurately answer the question of the user. provide every detail needed to satisfy the question of the user")
-    draft_backstory = st.text_area("Draft Answer Provider Backstory:", "You are an AI assistant whose only job is to answer questions accurately, completely and honestly. Do not be afraid to give negative answers if they are the truth. Your job is to help the user answer their questions to make their life better.")
-    
-    critique_goal = st.text_area("Draft Answer Critique Goal:", "Based on the draft answer provided by the 'initial_answer_provider' agent, write a critique on the validity, correctness, completeness and accuracy of the answer. Be very thorough in your critique as the career of the user depended on it.")
-    critique_backstory = st.text_area("Draft Answer Critique Backstory:", "You are an AI assistant whose only job is to write a critique on the accuracy, validity, correctness and completeness of the draft answer. The draft answer will be provided to you by the 'draft_answer_provider' agent.")
-    
-    final_goal = st.text_area("Final Answer Provider Goal:", "Incorporate the critique provided by the 'answer_critique' agent to the draft answer provided by the 'draft_answer_provider' agent, and provide the final answer to the user. Provide a very clear and accurate answer.")
-    final_backstory = st.text_area("Final Answer Provider Backstory:", "You are an AI assistant whose only job is to write the final answer to the user. The draft answer will be provided to you by the 'draft_answer_provider' agent and the critique to the draft answer will be provided by the 'answer_critique' agent.")
+    # Create two columns for layout
+    col1, col2 = st.columns(2)
 
-    # Input fields for task descriptions and expected outputs
-    draft_desc = st.text_area("Draft Answer Task Description:", "Respond correctly to this question: {question}")
-    draft_exp_output = st.text_area("Draft Answer Task Expected Output:", "An accurate, valid, correct, complete and honest answer to the user's question.")
-    
-    critique_desc = st.text_area("Critique Task Description:", "Critique to the draft answer to the question: {question} based on the draft answer provided by the 'draft_answer_provider' agent.")
-    critique_exp_output = st.text_area("Critique Task Expected Output:", "A very thorough critique on the accuracy, validity, correctness and completeness of the draft answer provided by the 'draft_answer_provider' agent.")
-    
-    final_desc = st.text_area("Final Answer Task Description:", "Final answer to the question: {question} based on the draft answer provided by the 'draft_answer_provider' agent and the critique provided by the 'answer_critique' agent.")
-    final_exp_output = st.text_area("Final Answer Task Expected Output:", "A final answer that incorporates the critique provided by the 'answer_critique' agent to the draft answer provided by the 'draft_answer_provider' agent to answer the question of the user.")
+    with col2:
+        st.write("Agent and Task Details")
 
-    if st.button("Ask CIA"):
-        with st.expander("Processing"):
-            sys.stdout = StreamToExpander(st)
-            with st.spinner("Generating Results"):
-                crew_result = create_crewai_setup(question, draft_goal, draft_backstory, critique_goal, critique_backstory, final_goal, final_backstory,
-                                                  draft_desc, draft_exp_output, critique_desc, critique_exp_output, final_desc, final_exp_output)
+        with st.expander("Draft Answer Provider Details"):
+            draft_goal = st.text_area("Draft Answer Provider Goal:", "accurately answer the question of the user. provide every detail needed to satisfy the question of the user")
+            draft_backstory = st.text_area("Draft Answer Provider Backstory:", "You are an AI assistant whose only job is to answer questions accurately, completely and honestly. Do not be afraid to give negative answers if they are the truth. Your job is to help the user answer their questions to make their life better.")
 
-        st.header("Results:")
-        st.markdown(crew_result)
+        with st.expander("Draft Answer Critique Details"):
+            critique_goal = st.text_area("Draft Answer Critique Goal:", "Based on the draft answer provided by the 'initial_answer_provider' agent, write a critique on the validity, correctness, completeness and accuracy of the answer. Be very thorough in your critique as the career of the user depended on it.")
+            critique_backstory = st.text_area("Draft Answer Critique Backstory:", "You are an AI assistant whose only job is to write a critique on the accuracy, validity, correctness and completeness of the draft answer. The draft answer will be provided to you by the 'draft_answer_provider' agent.")
+
+        with st.expander("Final Answer Provider Details"):
+            final_goal = st.text_area("Final Answer Provider Goal:", "Incorporate the critique provided by the 'answer_critique' agent to the draft answer provided by the 'draft_answer_provider' agent, and provide the final answer to the user. Provide a very clear and accurate answer.")
+            final_backstory = st.text_area("Final Answer Provider Backstory:", "You are an AI assistant whose only job is to write the final answer to the user. The draft answer will be provided to you by the 'draft_answer_provider' agent and the critique to the draft answer will be provided by the 'answer_critique' agent.")
+
+        with st.expander("Draft Answer Task Details"):
+            draft_desc = st.text_area("Draft Answer Task Description:", "Respond correctly to this question: {question}")
+            draft_exp_output = st.text_area("Draft Answer Task Expected Output:", "An accurate, valid, correct, complete and honest answer to the user's question.")
+
+        with st.expander("Critique Task Details"):
+            critique_desc = st.text_area("Critique Task Description:", "Critique to the draft answer to the question: {question} based on the draft answer provided by the 'draft_answer_provider' agent.")
+            critique_exp_output = st.text_area("Critique Task Expected Output:", "A very thorough critique on the accuracy, validity, correctness and completeness of the draft answer provided by the 'draft_answer_provider' agent.")
+
+        with st.expander("Final Answer Task Details"):
+            final_desc = st.text_area("Final Answer Task Description:", "Final answer to the question: {question} based on the draft answer provided by the 'draft_answer_provider' agent and the critique provided by the 'answer_critique' agent.")
+            final_exp_output = st.text_area("Final Answer Task Expected Output:", "A final answer that incorporates the critique provided by the 'answer_critique' agent to the draft answer provided by the 'draft_answer_provider' agent to answer the question of the user.")
+
+    with col1:
+        if st.button("Ask CIA"):
+            with st.expander("Processing"):
+                sys.stdout = StreamToExpander(st)
+                with st.spinner("Generating Results"):
+                    crew_result = create_crewai_setup(question, draft_goal, draft_backstory, critique_goal, critique_backstory, final_goal, final_backstory,
+                                                      draft_desc, draft_exp_output, critique_desc, critique_exp_output, final_desc, final_exp_output)
+
+            st.header("Results:")
+            st.markdown(crew_result)
 
 if __name__ == "__main__":
     run_crewai_app()
-
