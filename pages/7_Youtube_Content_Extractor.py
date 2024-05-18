@@ -109,8 +109,8 @@ def create_crewai_setup(question):
     extract_content = ExtractVideoContentTask(
         description= "Extract and summarize content from the specified YouTube video based from this user question: {question}",
         agent= video_content_extractor,
-        expected_output = "An accurate and comprehensive content from a Youtube Video requested by the user such as metadata, high-level summary, segmented breakdown, key quotes and phrases, visual elements, transcripts of key parts and contextual information.
-        cache=cache,
+        expected_output = "An accurate and comprehensive content from a Youtube Video requested by the user such as metadata, high-level summary, segmented breakdown, key quotes and phrases, visual elements, transcripts of key parts and contextual information.",
+        cache=cache
 )
     
     draft_answer = Task(
