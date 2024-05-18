@@ -5,3 +5,4 @@ pydeck
 streamlit
 crewai[tools]
 pysqlite3-binary
+agentops
