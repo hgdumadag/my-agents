@@ -12,6 +12,17 @@ from crewai_tools import (
     WebsiteSearchTool
 )
 
+class SimpleCache:
+    def __init__(self):
+        self.cache = {}
+
+    def get(self, key):
+        return self.cache.get(key)
+
+    def set(self, key, value):
+        self.cache[key] = value
+
+
 #Define the base LLM to use
 os.environ["OPENAI_API_BASE"] = 'https://api.groq.com/openai/v1'
 os.environ["OPENAI_MODEL_NAME"] ='llama3-70b-8192'  # Adjust based on available model
@@ -22,9 +33,33 @@ os.environ["OPENAI_API_KEY"] = st.secrets['OPENAI_API_KEY']
 os.environ["SERPER_API_KEY"] = st.secrets['SERPER_API_KEY']
 
 # Instantiate tools
-youtube_search_tool = YoutubeVideoSearchTool()
+youtube_tool = YoutubeVideoSearchTool()
 search_tool = SerperDevTool()
 web_rag_tool = WebsiteSearchTool()
+
+#class ExtractVideoContentTask(Task):
+ #   def __init__(self, description, agent, cache, youtube_tool, video_url):
+ #       super().__init__(description=description, agent=agent)
+ #       self.cache = cache
+ #       self.youtube_tool = youtube_tool
+ #       self.video_url = video_url
+
+ #   def run(self):
+ #       # Check if the content is in the cache
+ #       cached_content = self.cache.get(self.video_url)
+ #       if cached_content:
+ #           print("Content retrieved from cache.")
+ #           return cached_content
+
+  #      # Extract content using YoutubeVideoSearchTool
+  #      video_content = self.youtube_tool(youtube_video_url=self.video_url)
+        
+  #      # Store the extracted content in the cache
+  #      self.cache.set(self.video_url, video_content)
+        
+  #      return video_content
+
+
 
 #Define alternative LLM
 agent_llm = ChatOpenAI(
@@ -39,43 +74,52 @@ question = ""
 def create_crewai_setup(question):
     #Define Agents
     video_content_extractor = Agent(
-        role = "video content extractor",
-        goal = "accurately extract content comprehensively from a Youtube Video requested by the user such as metadata, high-level summary, segmented breakdown, key quotes and phrases, visual elements, transcripts of key parts, contextual information. You always go first among the other agents.",
-        backstory = "You are an AI assistant whose only job is to extract content from Youtube videos. You are experienced in video data analysis, proficient in using YouTube API to retrieve detailed information. Your job is to help the user answer their questions to make their life better. You always go first among the other agents.",
+        role = "senior video content extractor",
+        goal = "accurately extract content comprehensively from a Youtube Video requested by the user such as metadata, high-level summary, segmented breakdown, key quotes and phrases, visual elements, transcripts of key parts and contextual information using the youtube_tool. You always go first among the other agents.",
+        backstory = "You are an AI assistant whose only job is to extract content from Youtube videos. You are experienced in video data analysis, proficient in using the youtube_tool to retrieve detailed information. Your job is to help the user answer their questions to make their life better. You always go first among the other agents.",
+        tools=[youtube_tool],
         verbose = True,
         allow_delegation = False,
     )
 
-    answer_critique = Agent(
-        role = "draft answer critique",
-        goal = "Based on the draft answer provided by the 'initial_answer_provider' agent, write a critique on the validity, correctness, completeness and accuracy of the answer. Be very thorough in your critique as the career of the user depended on it.",
-        backstory = "You are an AI assistant whose only job is to write a critique on the accuracy, validity, correctness and completeness of the draft answer. The draft answer will be provided to you by the 'draft_answer_provider' agent.",
+    answering_specialist = Agent(
+        role = "senior answering specialist",
+        goal = "Based on the content extracted by the senior video content extractor, you provide accurate and concise answers to the user questions.",
+        backstory = "You are an AI assistant whose only job is to write an accurate and concise answer to the user questions based on the content extracted by the  senior video content extractor. You are an expert in natural language processing, skilled at extracting relevant information from textual data.",
         verbose = True,
         allow_delegation = False,
     )
-    ###
-    #researcher = Agent(
-    #    role="AI Research Specialist",
-    #    goal="To conduct thorough internet-based research to validate and expand upon the draft answers provided by the draft_answer_provider and to incorporate feedback from the answer_critique. The goal includes identifying credible sources, gathering pertinent facts, and contributing insights that ensure the final answer is accurate, up-to-date, detailed, and aligned with the critique's suggestions.",
-    #    backstory="Born out of a need to combat misinformation and provide only the most reliable data, I was created as a digital librarian with a twist. Equipped with advanced natural language processing skills and extensive access to a wide array of databases, my purpose is to sift through the vast ocean of information on the internet and extract only the most relevant and accurate data. My existence is dedicated to elevating the quality of information by providing well-researched contributions to any discourse, specifically tailored to enhance the accuracy and depth of responses in an AI-driven question-answer system.",
-    #    tools=[search_tool, web_rag_tool],
-    #    verbose=True,
-    #    max_rpm=50,
-    #    max_iter=20,
-    #    allow_delegation=False,
-    #    llm = agent_llm
-    #)
-    ###
-    final_answer_provider = Agent(
-        role = "final answer provider",
-        goal = "Incorporate the critique provided by the 'answer_critique' agent to the draft answer provided by the 'draft_answer_provider' agent, and provide the final answer to the user. Provide a very clear and accurate answer.",
-        backstory = "You are an AI assistant whose only job is to write the final answer to the user. The draft answer will be provided to you by the 'draft_answer_provider' agent and the critique to the draft answer will be provided by the 'answer_critique' agent.",
+    
+    answer_quality_reviewer = Agent(
+        role = "answer quality reviewer",
+        goal = "Ensure the accuracy, relevance, and quality of the answers provided by the senior answering specialist agent.",
+        backstory = "You are an AI assistant whose only job is to write the final answer to the user after you review the answer provided by the senior answering specialist agent. You are an expert in quality assurance and content validation, with a background in linguistics and knowledge verification. You are highly skilled at evaluating the correctness and coherence of information..",
         verbose = True,
         allow_delegation = False,
         #human_feedback = True,
     )
 
+
+    # Create the cache
+    cache = SimpleCache()
+
+
     #Define Tasks
+    draft_answer = Task(
+        description = f"Respond correctly to this question: {question}",
+        agent = draft_answer_provider,
+        expected_output = "An accurate, valid, correct, complete and honest answer to the user's question.",
+    )
+
+
+    extract_content = ExtractVideoContentTask(
+        description= "Extract and summarize content from the specified YouTube video based from this user question: {question}",
+        agent= video_content_extractor,
+        cache=cache,
+        youtube_tool=youtube_tool,
+    video_url='http://youtube.com/watch?v=example'
+)
+    
     draft_answer = Task(
         description = f"Respond correctly to this question: {question}",
         agent = draft_answer_provider,
