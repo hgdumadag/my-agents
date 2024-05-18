@@ -91,7 +91,7 @@ def create_crewai_setup(question):
     )
     
     answer_quality_reviewer = Agent(
-        role = "answer quality reviewer",
+        role = "senior answer quality reviewer",
         goal = "Ensure the accuracy, relevance, and quality of the answers provided by the senior answering specialist agent.",
         backstory = "You are an AI assistant whose only job is to write the final answer to the user after you review the answer provided by the senior answering specialist agent. You are an expert in quality assurance and content validation, with a background in linguistics and knowledge verification. You are highly skilled at evaluating the correctness and coherence of information..",
         verbose = True,
@@ -105,50 +105,31 @@ def create_crewai_setup(question):
 
 
     #Define Tasks
-    draft_answer = Task(
-        description = f"Respond correctly to this question: {question}",
-        agent = draft_answer_provider,
-        expected_output = "An accurate, valid, correct, complete and honest answer to the user's question.",
-    )
-
-
+   
     extract_content = ExtractVideoContentTask(
         description= "Extract and summarize content from the specified YouTube video based from this user question: {question}",
         agent= video_content_extractor,
+        expected_output = "An accurate and comprehensive content from a Youtube Video requested by the user such as metadata, high-level summary, segmented breakdown, key quotes and phrases, visual elements, transcripts of key parts and contextual information.
         cache=cache,
-        youtube_tool=youtube_tool,
-    video_url='http://youtube.com/watch?v=example'
 )
     
     draft_answer = Task(
-        description = f"Respond correctly to this question: {question}",
-        agent = draft_answer_provider,
+        description = f"Respond correctly to this question: {question} based on the content extracted by the video_content_extractor agent.",
+        agent = answering_specialist,
         expected_output = "An accurate, valid, correct, complete and honest answer to the user's question.",
+        context=[extract_content]
     )
-
-    critique = Task(
-        description = f"Critique to the draft answer to the question: {question} based on the draft answer provided by the 'draft_answer_provider' agent.",
-        agent = answer_critique,
-        expected_output = "a very thorough critique on the accuracy, validity, correctness and completeness of the draft answer provided by the 'draft_answer_provider' agent.",
-    )
-
-    #research_task = Task(
-    #    description=f"Research and verify information related to the query: '{question}'",
-    #    agent=researcher,
-    #    expected_output="Top 3 results of verified facts and comprehensive data that enhance the understanding and accuracy of the response to the user's question."
-    #)
 
     final_answer = Task(
-        description = f"Final answer to the question: {question} based on the draft answer provided by the 'draft_answer_provider' agent and the critique provided by the 'answer_critique' agent.",
-        agent = final_answer_provider,
-        expected_output = "A final answer that incorporates the critique provided by the 'answer_critique' agent to the draft answer provided by the 'draft_answer_provider' agent to answer the question of the user.",
+        description = f"Final answer to the question: {question} based on the draft answer provided by the 'answering specialist' agent and the content extracted by the 'video_content_extractor' agent.",
+        agent = answer_quality_reviewer,
+        expected_output = "A final answer that reviews the answer provided by the 'answering_specialist' agent and the content extracted by the 'video_content_extractor' agent in order to answer the question of the user.",
+        context=[extract_content, draft_answer]
     )
 
     crew = Crew(
-        #agents = [draft_answer_provider, answer_critique, researcher, final_answer_provider],
-        #tasks = [draft_answer, critique, research_task, final_answer 
-        agents = [draft_answer_provider, answer_critique, final_answer_provider],
-        tasks = [draft_answer, critique,  final_answer],
+        agents = [video_content_extractor, answering_specialist, answer_quality_reviewer],
+        tasks = [extract_content, draft_answer, final_answer],
         verbose = 2,
         process = Process.sequential
     )
@@ -205,11 +186,11 @@ class StreamToExpander:
 
 #Streamlit Interface
 def run_crewai_app():
-    st.title("CIA Agents")
+    st.title("Youtube Agents")
 
-    question = st.text_input("What do you want to ask the CIA Agents:")
+    question = st.text_input("What do you want to know about the youtube video? Kindly indicate the URL:")
     
-    if st.button("Ask CIA"):
+    if st.button("Submit"):
         with st.expander("Processing"):
             sys.stdout = StreamToExpander(st)
             with st.spinner("Generating Results"):
